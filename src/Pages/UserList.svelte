@@ -3,6 +3,7 @@
     import Button from "../Components/Button.svelte";
     import TextField from "../Components/TextField.svelte";
     import { user } from "../Stores/user";
+    import { flip } from "svelte/animate";
     const users = [
         {
             avatar: "https://picsum.photos/id/152/256/256",
@@ -28,6 +29,31 @@
             tags: ["developer", "arduino"]
         }
     ];
+    
+    const projects = [{
+        authors: ["Daniel Bulant"],
+        name: "Domovská stránka",
+        desc: "Moje vlastní webová stránka",
+        tags: ["web"],
+        links: ["https://danbulant.eu"]
+    }, {
+        authors: ["Daniel Bulant", "Bruno Bartůněk", "Vojtěch Jungman"],
+        name: "Conwo",
+        desc: "Conwo, profesní síť, projekt pro DigiEduHack 2021",
+        tags: ["web"],
+        links: []
+    }, {
+        authors: ["Daniel Bulant"],
+        name: "Igni",
+        desc: "Igni discord bot",
+        tags: ["discord_bot"],
+        links: ["https://danbulant.eu"]
+    }];
+
+    var projectTags = {
+        web: "Web",
+        discord_bot: "Discord bot"
+    };
 
     var tags = {
         developer: {
@@ -134,21 +160,21 @@
 
     <div class="px-4">
         {#each Object.keys(filterTags(tags)) as tag (tag)}
-        <span class="pr-1">
-            <Button main={selectedTags.includes(tag)} on:click={() => toggle(tag)}>{tags[tag].name}</Button> 
-        </span>
+            <span class="pr-1" animate:flip>
+                <Button main={selectedTags.includes(tag)} on:click={() => toggle(tag)}>{tags[tag].name}</Button> 
+            </span>
         {/each}
     </div>
 
     <ul class="pl-0 ml-0">
-        {#each users.filter(hasTags, selectedTags, search) as user}
-        <li class="flex items-center m-0 px-4 py-2" on:click={() => select(user)}>
-            <img src={user.avatar} alt="Avatar" class="rounded-full h-16">
-            <div class="flex flex-col ml-4">
-                <h2 class="text-xl m-0">{user.name}</h2>
-                <span class="text-gray-800">{#each user.tags as tag}{tags[tag].name} &middot; {/each}{user.school}</span>
-            </div>
-        </li>
+        {#each users.filter(hasTags, selectedTags, search) as user (user.name)}
+            <li class="flex items-center m-0 px-4 py-2" on:click={() => select(user)} animate:flip={{ duration: d => Math.sqrt(d) * 50 }}>
+                <img src={user.avatar} alt="Avatar" class="rounded-full h-16">
+                <div class="flex flex-col ml-4">
+                    <h2 class="text-xl m-0">{user.name}</h2>
+                    <span class="text-gray-800">{#each user.tags as tag}{tags[tag].name} &middot; {/each}{user.school}</span>
+                </div>
+            </li>
         {/each}
     </ul>
 </div>
@@ -179,6 +205,27 @@
             </div>
 
             <p>{selected.extended}</p>
+
+            <ul>
+                {#each projects.filter(p => p.authors.includes(selected.name)) as project (project.name)}
+                    <li>
+                        <h3 class="p-0">{project.name}</h3>
+                        <span>{project.authors.join(", ")}</span> &middot;
+                        <span>{project.tags.map(t => projectTags[t]).join(", ")}</span>
+                        {#if project.links && project.links.length}
+                            <div>
+                                <span>Links:</span>
+                                <ul>
+                                    {#each project.links as link}
+                                        <li><a href="{link}">{link}</a></li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        {/if}
+                        <p>{project.desc}</p>
+                    </li>
+                {/each}
+            </ul>
         </div>
     {/if}
 </Drawer>

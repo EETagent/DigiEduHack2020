@@ -29,6 +29,7 @@
     }
     var current;
     var start;
+    var content;
     function getEventClientY(event) {
         return 'clientY' in event ? event.clientY : event.touches[0].clientY;
     };
@@ -51,6 +52,12 @@
         
         current = null;
         start = null;
+        if(fromContent && deltaY > 0) {
+            if(content.scrollTop > 0) return;
+        }
+        if(fromContent && deltaY < 0) {
+            if(content.scrollTop < content.clientHeight - container.clientHeight) return;
+        }
         if (deltaY > toggleThreshold && !collapsed) {
             collapsed = true;
         } else if (deltaY < -toggleThreshold && collapsed) {
@@ -58,29 +65,41 @@
         } else {
             handleChange();
         }
+        fromContent = false;
     }
     function handleTouchMove(e) {
         const deltaY = getEventClientY(e) - getEventClientY(current);
+        if(fromContent && deltaY > 0) {
+            if(content.scrollTop > 0) return;
+        }
+        if(fromContent && deltaY < 0) {
+            if(content.scrollTop < content.clientHeight - container.clientHeight) return;
+        }
         if (data.bottom - deltaY > -container.clientHeight && data.bottom - deltaY < 0) {
             current = e;
         }
         data.bottom = Math.max(Math.min(0, data.bottom - deltaY), -container.clientHeight);
     }
+    var fromContent = false;
+    function handleContentTouchDown(e) {
+        fromContent = true;
+        handleTouchDown(e);
+    }
 </script>
 
 <Backdrop darkenBackground shown={!collapsed} on:mousedown={(e) => collapsable && (collapsed = true)}>
-    <div class="flex flex-col w-full absolute m-auto desktop:(max-w-700px left-1/2 transform -translate-x-1/2) shadow transition bg-white rounded-t" bind:this={container} style="bottom: {data.bottom}px; will-change: bottom; max-height: calc(100vh- 1rem);">
+    <div class="flex max-h-full flex-col w-full absolute m-auto desktop:(max-w-700px left-1/2 transform -translate-x-1/2) shadow transition bg-white rounded-t" bind:this={container} style="bottom: {data.bottom}px; will-change: bottom; max-height: calc(100vh- 1rem);">
         <div
             on:mousedown={handleTouchDown}
             on:touchstart={handleTouchDown}
-            class="flex-grow-0 cursor-pointer pointer-events-auto w-full h-13"
+            class="flex-grow-0 cursor-pointer pointer-events-auto w-full h-9"
         >
             <slot name="handle">
-                <div class="self-center flex-shrink-0 w-20 h-1 my-6 mx-auto bg-black rounded-full" />
+                <div class="self-center flex-shrink-0 w-20 h-1 my-4 mx-auto bg-black rounded-full" />
             </slot>
         </div>
 
-        <div class="flex-grow-1">
+        <div on:mousedown={handleContentTouchDown} on:touchstart={handleContentTouchDown} class="flex-grow-1 overflow-auto" bind:this={content} style="max-height: calc(100vh - 2.25rem);">
             <slot />
         </div>
     </div>
