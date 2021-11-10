@@ -17,20 +17,20 @@
         ) {
            $user = name;
         } else {
-            error = "Nesprávné jméno nebo heslo";
+            error = "Wrong name or password";
         }
     }
 </script>
 
-<div class="m-4">
-    <h1 class="text-xl items-center justify-center align-text-red-500">Profesní síť</h1>
-    <TextField placeholder="Jméno" bind:value={name} color={error ? "error" : ["Daniel Bulant", "Vojtěch Jungman"].includes(name) ? "blue" : "normal"} />
-    <TextField placeholder="Heslo" type="password" bind:value={password} color={error ? "error" : "normal"} />
+<div class="p-4 max-w-150 m-auto">
+    <h1 class="text-xl items-center justify-center align-text-red-500">Conwo</h1>
+    <TextField placeholder="Name" bind:value={name} color={error ? "error" : ["Daniel Bulant", "Vojtěch Jungman"].includes(name) ? "blue" : "normal"} />
+    <TextField placeholder="Password" password bind:value={password} color={error ? "error" : "normal"} />
     {#if error}
         <span class="text-red-500 py-4 inline-block">{error}</span>
     {/if}
     <div class="flex justify-between">
-        <Button on:click={register} disabled>Registrovat se</Button>
-        <Button on:click={login} main>Přihlásit se</Button>
+        <Button on:click={register} disabled>Register</Button>
+        <Button on:click={login} main>Login</Button>
     </div>
 </div>
