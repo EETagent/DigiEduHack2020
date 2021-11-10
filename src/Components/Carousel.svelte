@@ -30,20 +30,25 @@
             left: scroller.scrollLeft,
             top: scroller.scrollTop,
             // Get the current mouse position
-            x: e.clientX,
-            y: e.clientY,
+            x: (e.targetTouches ? e.targetTouches[0] : e).clientX,
+            y: (e.targetTouches ? e.targetTouches[0] : e).clientY,
         };
         document.addEventListener("mousemove", mouseMoveHandler);
         document.addEventListener("mouseup", mouseUpHandler);
+        document.addEventListener("touchmove", mouseMoveHandler);
+        document.addEventListener("touchend", mouseUpHandler);
+        // e.preventDefault();
     };
     const mouseMoveHandler = (e) => {
         // How far the mouse has been moved
-        const dx = e.clientX - pos.x;
+        const dx = (e.targetTouches ? e.targetTouches[0] : e).clientX - pos.x;
         targetScrollLeft = pos.left - dx;
     };
     const mouseUpHandler = (e) => {
         document.removeEventListener("mousemove", mouseMoveHandler);
         document.removeEventListener("mouseup", mouseUpHandler);
+        document.removeEventListener("touchmove", mouseMoveHandler);
+        document.removeEventListener("touchend", mouseUpHandler);
         applyNativeSnap = false;
         mouseDown = false;
         targetScrollLeft = currentPage * scrollerWidth;
@@ -56,13 +61,14 @@
     }
 </script>
 
-<div class="flex flex-col w-full h-full overflow-visible">
+<div class="flex flex-col w-full flex-grow overflow-visible">
     <div
         class="flex flex-grow w-full overflow-hidden --hide-scrollbar --scroller"
         class:--smooth-snap={applyNativeSnap}
         bind:this={scroller}
         bind:clientWidth={scrollerWidth}
         on:scroll={onScroll}
+        on:touchstart={mouseDownHandler}
         on:mousedown={mouseDownHandler}
     >
         <slot />

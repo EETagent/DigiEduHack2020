@@ -10,11 +10,14 @@
 
 	var openUser = true;
 	var page = "users";
+	var currentPageId;
 	var setCurrentPage;
 
 	$: {
 		if(setCurrentPage) setCurrentPage(["users", "projects"].indexOf(page));
 	}
+	$: if(currentPageId !== undefined && !isNaN(currentPageId)) page = ["users", "projects"][currentPageId];
+	$: console.log(currentPageId, page);
 </script>
 
 <main class="select-none h-full flex flex-col" style="">
@@ -28,7 +31,7 @@
 			<small class="cursor-pointer" on:click={() => $user = null}>Log out</small>
 		</div>
 
-		<Carousel pageCount={2} showDots={false} bind:setCurrentPage>
+		<Carousel pageCount={2} showDots={false} bind:currentPage={currentPageId} bind:setCurrentPage>
 			<div class="h-full">
 				<UserList />
 			</div>
