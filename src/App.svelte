@@ -4,7 +4,7 @@
 	import { user } from "./Stores/user";
 </script>
 
-<main>
+<main class="select-none">
 	{#if !$user}
 		<Home />
 	{:else}
@@ -17,5 +17,8 @@
 		font-family: 'Roboto', sans-serif;
 		margin: 0;
 		padding: 0;
+	}
+	:global(*) {
+		-webkit-tap-highlight-color: transparent;
 	}
 </style>

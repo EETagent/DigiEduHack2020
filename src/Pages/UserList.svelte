@@ -151,12 +151,14 @@
 <div class="flex items-center px-4 mb-2 shadow">
     <h1 class="text-2xl">Conwo</h1>
     <div class="flex-grow"></div>
-    <small class="mr-1" on:click={selectCurrent}>{$user} &middot;</small>
-    <small on:click={() => $user = null}>Log out</small>
+    <small class="mr-1 cursor-pointer" on:click={selectCurrent}>{$user} &middot;</small>
+    <small class="cursor-pointer" on:click={() => $user = null}>Log out</small>
 </div>
 
 <div class="max-w-150 mx-auto">
-    <TextField placeholder="Vyhledávání" bind:value={search} />
+    <div class="px-4">
+        <TextField placeholder="Vyhledávání" bind:value={search} />
+    </div>
 
     <div class="px-4">
         {#each Object.keys(filterTags(tags)) as tag (tag)}
@@ -168,7 +170,7 @@
 
     <ul class="pl-0 ml-0">
         {#each users.filter(hasTags, selectedTags, search) as user (user.name)}
-            <li class="flex items-center m-0 px-4 py-2" on:click={() => select(user)} animate:flip={{ duration: d => Math.sqrt(d) * 50 }}>
+            <li class="cursor-pointer flex items-center m-0 px-4 py-2" on:click={() => select(user)} animate:flip={{ duration: d => Math.sqrt(d) * 50 }}>
                 <img src={user.avatar} alt="Avatar" class="rounded-full h-16">
                 <div class="flex flex-col ml-4">
                     <h2 class="text-xl m-0">{user.name}</h2>
@@ -181,7 +183,7 @@
     
 <Drawer bind:collapsed>
     {#if selected}
-        <div class="m-5 mt-0 flex flex-col items-center">
+        <div class="m-5 pb-4 mt-0 flex flex-col items-center">
             <img src={selected.avatar} alt="Avatar" class="rounded-full h-16">
 
             <div class="flex flex-col ml-4">

@@ -35,17 +35,18 @@
     };
     function handleTouchDown(e) {
         if(!collapsable) return;
+        e.preventDefault();
         current = e;
         start = e;
         document.body.addEventListener("touchmove", handleTouchMove);
-        document.body.addEventListener("touchup", handleTouchUp);
+        document.body.addEventListener("touchend", handleTouchUp);
         document.body.addEventListener("mousemove", handleTouchMove);
         document.body.addEventListener("mouseup", handleTouchUp);
         animation.pause();
     }
     function handleTouchUp(e) {
         document.body.removeEventListener("touchmove", handleTouchMove);
-        document.body.removeEventListener("touchup", handleTouchUp);
+        document.body.removeEventListener("touchend", handleTouchUp);
         document.body.removeEventListener("mousemove", handleTouchMove);
         document.body.removeEventListener("mouseup", handleTouchUp);
         const deltaY = getEventClientY(current) - getEventClientY(start);
@@ -78,6 +79,7 @@
         if (data.bottom - deltaY > -container.clientHeight && data.bottom - deltaY < 0) {
             current = e;
         }
+        e.preventDefault();
         data.bottom = Math.max(Math.min(0, data.bottom - deltaY), -container.clientHeight);
     }
     var fromContent = false;
